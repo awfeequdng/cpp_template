@@ -51,4 +51,19 @@ struct remove_volatile<volatile T> : type_is<T>{
 template <typename T>
 using remove_volatile_t = typename remove_volatile<T>::type;
 
+template <typename T>
+struct remove_cv {
+    using type = remove_volatile_t<remove_const_t<T>>;
+};
+template <typename T>
+using remove_cv_t = typename remove_cv<T>::type;
+
+// decay_t
+template <typename T>
+struct decay {
+    using type = remove_cv_t<remove_reference_t<T>>;
+};
+template <typename T>
+using decay_t = typename decay<T>::type;
+
 } // namespace my_traits

@@ -51,10 +51,42 @@ void test_remove_reference() {
     assert(c);
 }
 
+void test_remove_cv() {
+    std::cout << __FUNCTION__ << std::endl;
+    auto a = my_traits::is_same_v<int, my_traits::remove_cv_t< volatile const int>>;
+    auto b = my_traits::is_same_v<int, my_traits::remove_cv_t< const volatile int>>;
+    auto c = my_traits::is_same_v<const int, my_traits::remove_volatile_t< const volatile int>>;
+    auto d = my_traits::is_same_v<const int, my_traits::remove_volatile_t<volatile const int>>;
+    auto e = my_traits::is_same_v<volatile int, my_traits::remove_const_t< const volatile int>>;
+    auto f = my_traits::is_same_v<volatile int, my_traits::remove_const_t<volatile const int>>;
+    assert(a);
+    assert(b);
+    assert(c);
+    assert(d);
+    assert(e);
+    assert(f);
+}
+
+void test_decay() {
+    std::cout << __FUNCTION__ << std::endl;
+    auto a = my_traits::is_same_v<int, my_traits::decay_t<volatile const int &>>;
+    auto b = my_traits::is_same_v<int, my_traits::decay_t<volatile const int>>;
+    auto c = my_traits::is_same_v<int, my_traits::decay_t<const int>>;
+    auto d = my_traits::is_same_v<int, my_traits::decay_t<volatile int>>;
+    auto e = my_traits::is_same_v<int, my_traits::decay_t<int>>;
+    assert(a);
+    assert(b);
+    assert(c);
+    assert(d);
+    assert(e);
+}
+
 int main() {
     test_is_same();
     test_remove_reference();
     test_remove_const();
+    test_remove_cv();
+    test_decay();
 
     return 0;
 }
