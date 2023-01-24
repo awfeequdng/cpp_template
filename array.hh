@@ -1,14 +1,17 @@
 #pragma once
 
+#include <type_traits>
 template <typename T, int N>
-class Array{
-public:
+struct Array{
+
     T operator[](int idx) {
         if (idx < N) {
             return data_[idx];
         }
         throw "index out of range";
     }
-private:
+
     T data_[N];
 };
+template <typename...Args>
+Array(const Args&... args) -> Array<std::common_type_t<Args...>, sizeof...(Args)>;

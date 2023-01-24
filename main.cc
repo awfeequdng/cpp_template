@@ -1,6 +1,7 @@
 #include <iostream>
 #include "my_traits.hh"
 #include <cassert>
+#include <array>
 
 #include "array.hh"
 
@@ -104,6 +105,16 @@ void test_array() {
         std::cout << "\na[10] error" << std::endl;
     }
 
+    std::array arr1 = {1, 2, 3};
+    Array arr2 = {1, 2, 3};
+    assert(arr2[0] == 1);
+    assert(arr2[1] == 2);
+    assert(arr2[2] == 3);
+
+    Array arr3 = {1, 2, 3.1};
+    assert(arr3[0] == 1.0);
+    assert(arr3[1] == 2.0);
+    assert(arr3[2] == 3.1);
 }
 
 template <typename T = double, typename U = double>
