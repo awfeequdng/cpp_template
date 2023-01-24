@@ -18,8 +18,37 @@ void test_is_same() {
     assert(c);
 }
 
+void test_remove_const() {
+    std::cout << __FUNCTION__ << std::endl;
+
+}
+
+void test_remove_reference() {
+    std::cout << __FUNCTION__ << std::endl;
+    std::cout << typeid(int &).name() << std::endl;
+    std::cout << typeid(int).name() << std::endl;
+    std::cout << typeid(const int &).name() << std::endl;
+    // 上面三个的typeid相同的
+    assert(typeid(int) == typeid(my_traits::remove_reference<int &>::type));
+    assert(typeid(int &).name() == typeid(my_traits::remove_reference<int &>::type).name());
+
+    int a = 0;
+    my_traits::remove_reference<int &>::type b = a;
+    my_traits::remove_reference<int &>::type c = 0;
+    decltype(b) d = 0;
+    my_traits::remove_const<int &>::type e = d;
+    my_traits::remove_const<const int>::type f = d;
+    const int g = e; // 这个怎么不报错
+    const int tt = 2;
+    my_traits::remove_const<const int &>::type h = d;
+    const int i =tt;
+    char cd[i] = {0};
+}
+
 int main() {
     test_is_same();
+    test_remove_reference();
+    test_remove_const();
 
     return 0;
 }
