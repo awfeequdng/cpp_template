@@ -2,6 +2,8 @@
 #include "my_traits.hh"
 #include <cassert>
 
+#include "array.hh"
+
 void test_is_same() {
     std::cout << __FUNCTION__ << std::endl;
     auto a = my_traits::is_same_v<int, int&> == false;
@@ -81,12 +83,38 @@ void test_decay() {
     assert(e);
 }
 
+template <typename T, typename U>
+auto add(T a, U b) -> decltype(auto) {
+    return a + b;
+}
+
+void test_auto() {
+    std::cout << add(1, 12) << std::endl;
+    std::cout << add(1, 12.2) << std::endl;
+    std::cout << add(1.1, 12.0) << std::endl;
+    std::cout << add(1.1, 12) << std::endl;
+}
+
+void test_array() {
+    Array<int, 10> a;
+    std::cout << "a[9] = " << a[9] << std::endl;
+    try {
+        std::cout << "a[10] = " << a[10] << std::endl;
+    } catch (...) {
+        std::cout << "\na[10] error" << std::endl;
+    }
+
+}
+
 int main() {
     test_is_same();
     test_remove_reference();
     test_remove_const();
     test_remove_cv();
     test_decay();
+    test_auto();
+    test_array();
+
 
     return 0;
 }
