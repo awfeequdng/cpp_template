@@ -20,7 +20,21 @@ void test_is_same() {
 
 void test_remove_const() {
     std::cout << __FUNCTION__ << std::endl;
-
+    // 上面三个的typeid相同的
+    const int i = 0;
+    const int &j = i;
+    auto a = my_traits::is_same<int, my_traits::remove_const_t<const int>>::value;
+    auto b = my_traits::is_same_v<int, my_traits::remove_const_t<decltype(i)>>;
+    auto d = my_traits::is_same_v<int, my_traits::remove_const_t<my_traits::remove_reference_t<decltype(j)>>>; // 为什么这个会报错
+    // 为什么const int &中的const没有被remove掉？？？？
+    // todo:
+    auto c = my_traits::is_same_v<const int &, my_traits::remove_const_t<decltype(j)>>;
+    auto e = my_traits::is_same_v<const int &, std::remove_const_t<decltype(j)>>;
+    assert(a);
+    assert(b);
+    assert(d);
+    assert(c);
+    assert(e);
 }
 
 void test_remove_reference() {
@@ -29,20 +43,12 @@ void test_remove_reference() {
     std::cout << typeid(int).name() << std::endl;
     std::cout << typeid(const int &).name() << std::endl;
     // 上面三个的typeid相同的
-    assert(typeid(int) == typeid(my_traits::remove_reference<int &>::type));
-    assert(typeid(int &).name() == typeid(my_traits::remove_reference<int &>::type).name());
-
-    int a = 0;
-    my_traits::remove_reference<int &>::type b = a;
-    my_traits::remove_reference<int &>::type c = 0;
-    decltype(b) d = 0;
-    my_traits::remove_const<int &>::type e = d;
-    my_traits::remove_const<const int>::type f = d;
-    const int g = e; // 这个怎么不报错
-    const int tt = 2;
-    my_traits::remove_const<const int &>::type h = d;
-    const int i =tt;
-    char cd[i] = {0};
+    auto a = my_traits::is_same<int, my_traits::remove_reference_t<int &>>::value;
+    auto b = my_traits::is_same_v<int, my_traits::remove_reference_t<int &>>;
+    auto c = my_traits::is_same_v<const int, my_traits::remove_reference_t<const int &>>;
+    assert(a);
+    assert(b);
+    assert(c);
 }
 
 int main() {
