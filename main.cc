@@ -106,6 +106,30 @@ void test_array() {
 
 }
 
+template <typename T = double, typename U = double>
+auto min(const T& a, const U& b) {
+    std::cout << typeid(a).name() << std::endl;
+    std::cout << typeid(b).name() << std::endl;
+    return a < b ? a : b;
+}
+
+template <auto a = 2, auto b = 1>
+auto max() {
+    return a < b ? b : a;
+}
+
+void test_func_template() {
+    min(1.0, 2);
+    min(1, 2.0);
+    min<>(1.0, 2);
+    min<>(1, 2.0);
+    min<int>(1.0, 2);
+    min<double>(1, 2.0);
+
+    std::cout << max<0>() << std::endl;
+    std::cout << max<2>() << std::endl;
+}
+
 int main() {
     test_is_same();
     test_remove_reference();
@@ -114,6 +138,7 @@ int main() {
     test_decay();
     test_auto();
     test_array();
+    test_func_template();
 
 
     return 0;
