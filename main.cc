@@ -130,6 +130,42 @@ void test_func_template() {
     std::cout << max<2>() << std::endl;
 }
 
+void test_count() {
+    std::cout << __FUNCTION__ << std::endl;
+    std::cout << my_traits::count(1.0, 20, "hello") << std::endl;
+    std::cout << my_traits::count() << std::endl;
+}
+
+void test_tuple() {
+    std::cout << __FUNCTION__ << std::endl;
+    auto t = my_traits::make_tuple(1.0, 20, "string");
+    assert(std::get<0>(t) ==  1.0);
+    assert(std::get<1>(t) ==  20);
+    assert(std::string(std::get<2>(t)) ==  "string");
+}
+
+void print() {
+    std::cout << std::endl;
+}
+template <typename First, typename...Args>
+void print(const First &a, const Args&... args) {
+    std::cout << a << " ";
+    print(args...);
+}
+
+void test_print() {
+    print(1, 20.0, 30, "string", true);
+}
+
+template<typename... Args>
+void print_collapse_expr(const Args&... args) {
+    ((std::cout << args << " "), ...);
+    std::cout << "\n";
+}
+void test_collapse_expr() {
+    print_collapse_expr(20, 30.0, 'c', "string", true);
+}
+
 int main() {
     test_is_same();
     test_remove_reference();
@@ -139,7 +175,10 @@ int main() {
     test_auto();
     test_array();
     test_func_template();
-
+    test_count();
+    test_tuple();
+    test_print();
+    test_collapse_expr();
 
     return 0;
 }

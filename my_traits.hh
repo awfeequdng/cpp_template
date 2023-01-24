@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tuple>
 namespace my_traits {
 
 template <bool v>
@@ -65,5 +66,19 @@ struct decay {
 };
 template <typename T>
 using decay_t = typename decay<T>::type;
+
+
+// count
+template <typename...Args>
+int count(const Args&... args) {
+    // return sizeof...(args);
+    return sizeof...(Args);
+}
+
+// make_tuple
+template <typename...Args>
+auto make_tuple(const Args&... args) {
+    return std::make_tuple(args...);
+}
 
 } // namespace my_traits
