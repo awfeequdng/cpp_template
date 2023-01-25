@@ -177,6 +177,56 @@ void test_collapse_expr() {
     print_collapse_expr(20, 30.0, 'c', "string", true);
 }
 
+void process(int &i) {
+    std::cout << "lvalue: " << i << std::endl;
+}
+
+void process(int &&i) {
+    std::cout << "rvalue: " << i << std::endl;
+}
+
+template <typename T>
+T&& forward(T&& v) {
+    return static_cast<T&&>(v);
+}
+
+template <typename T>
+T&& forward(T& v) {
+    return static_cast<T&&>(v);
+}
+
+template<typename T>
+void test_ref_col(T&& v){
+    std::cout << "is int & " << std::is_same_v<T, int &> << std::endl;
+    std::cout << "is int " << std::is_same_v<T, int> << std::endl;
+    process(forward<T>(v));
+}
+
+void test_reference_collapse() {
+    std::cout << __FUNCTION__ << std::endl;
+    int i = 0;
+    test_ref_col(i);
+    test_ref_col(1);
+    test_ref_col(forward(1));
+    test_ref_col(forward(i));
+}
+
+void test_tie() {
+    int a1 = 0;
+    bool b1 = false;
+    auto t1 = my_traits::tie(a1, b1);
+    std::get<0>(t1) = 10;
+    std::get<1>(t1) = true;
+    assert(a1 == 10);
+    assert(b1 == true);
+
+    std::tuple t2 = {5, false};
+    my_traits::tie(a1, b1) = t2;
+    assert(a1 == 5);
+    assert(b1 == false);
+
+}
+
 int main() {
     test_is_same();
     test_remove_reference();
@@ -190,6 +240,8 @@ int main() {
     test_tuple();
     test_print();
     test_collapse_expr();
+    test_reference_collapse();
+    test_tie();
 
     return 0;
 }

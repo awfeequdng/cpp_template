@@ -1,6 +1,8 @@
 #pragma once
 
 #include <tuple>
+// 什么是traits
+// 可以认为是：用来提高编译器泛型能力的类或者对象
 namespace my_traits {
 
 template <bool v>
@@ -79,6 +81,12 @@ int count(const Args&... args) {
 template <typename...Args>
 auto make_tuple(const Args&... args) {
     return std::make_tuple(args...);
+}
+
+// tie
+template <typename... Args>
+std::tuple<Args&...> tie(Args&...args) {
+    return {args...};
 }
 
 } // namespace my_traits
