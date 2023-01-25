@@ -224,7 +224,6 @@ void test_tie() {
     my_traits::tie(a1, b1) = t2;
     assert(a1 == 5);
     assert(b1 == false);
-
 }
 
 void test_move() {
@@ -232,6 +231,18 @@ void test_move() {
     int i = 1;
     process(my_traits::move(i));
     process(my_traits::move(0));
+}
+
+void test_conditional() {
+    std::cout << __FUNCTION__ << "---------" << std::endl;
+    auto a1 = my_traits::is_same_v<double, my_traits::conditional_t<false, int, double>>;
+    auto a2 = my_traits::is_same_v<int, my_traits::conditional_t<true, int, double>>;
+    assert(a1);
+    assert(a2);
+    auto b1 = my_traits::is_same_v<double, my_traits::conditional_t<true, int, double>>;
+    auto b2 = my_traits::is_same_v<int, my_traits::conditional_t<false, int, double>>;
+    assert(b1 == false);
+    assert(b2 == false);
 }
 
 int main() {
@@ -249,7 +260,8 @@ int main() {
     test_collapse_expr();
     test_reference_collapse();
     test_tie();
-
     test_move();
+    test_conditional();
+
     return 0;
 }

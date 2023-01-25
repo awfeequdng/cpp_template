@@ -95,4 +95,12 @@ remove_reference_t<T>&& move(T&& v) {
     return static_cast<remove_reference_t<T>&&>(v);
 }
 
+// conditional
+template <bool, typename T, typename F>
+struct conditional : type_is<T> {};
+template <typename T, typename F>
+struct conditional<false, T, F> : type_is<F> {};
+template <bool b, typename T, typename F>
+using conditional_t = typename conditional<b, T, F>::type;
+
 } // namespace my_traits
