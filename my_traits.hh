@@ -5,6 +5,9 @@
 // 可以认为是：用来提高编译器泛型能力的类或者对象
 namespace my_traits {
 
+template <typename...Args>
+using void_t = void;
+
 template <bool v>
 struct bool_constant {
     static constexpr bool value = v;
@@ -102,5 +105,29 @@ template <typename T, typename F>
 struct conditional<false, T, F> : type_is<F> {};
 template <bool b, typename T, typename F>
 using conditional_t = typename conditional<b, T, F>::type;
+
+// has x
+template <typename, typename>
+struct has_x : false_type {};
+template <typename T>
+struct has_x<T, decltype(T::x)> : true_type {};
+
+// enable if
+template <bool, typename T = void>
+struct enable_if {};
+template <typename T>
+struct enable_if<true, T> : type_is<T> {
+};
+template <bool b, typename T=void>
+using enable_if_t = typename enable_if<b, T>::type;
+
+// has member type
+template <typename, typename = void_t<>>
+struct has_member_type : false_type {};
+template <typename T>
+struct has_member_type<T, void_t<typename T::type>> : true_type {};
+template <typename T, typename V= void_t<>>
+constexpr bool has_member_type_v = has_member_type<T>::value;
+
 
 } // namespace my_traits

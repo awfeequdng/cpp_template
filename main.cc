@@ -245,6 +245,51 @@ void test_conditional() {
     assert(b2 == false);
 }
 
+void test_has_x() {
+    std::cout << __FUNCTION__ << "---------" << std::endl;
+
+    class A {
+        public:
+        int x;
+    };
+    class B {
+        public:
+        double x;
+    };
+    class C {
+        public:
+    };
+    auto a = my_traits::has_x<A, int>::value;
+    assert(a);
+    auto b = my_traits::has_x<A, double>::value;
+    assert(!b);
+
+    a = my_traits::has_x<B, int>::value;
+    assert(!a);
+    b = my_traits::has_x<B, double>::value;
+    assert(b);
+
+    auto c = my_traits::has_x<C, int>::value;
+    assert(!c);
+}
+
+void test_has_member_type() {
+    std::cout << __FUNCTION__ << "---------" << std::endl;
+
+    class A {
+        public:
+        using type = int;
+    };
+    class B {
+        public:
+        double x;
+    };
+    auto a = my_traits::has_member_type_v<A>;
+    auto b = my_traits::has_member_type_v<B>;
+    assert(a);
+    assert(!b);
+}
+
 int main() {
     test_is_same();
     test_remove_reference();
@@ -262,6 +307,8 @@ int main() {
     test_tie();
     test_move();
     test_conditional();
+    test_has_x();
+    test_has_member_type();
 
     return 0;
 }
