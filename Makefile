@@ -25,7 +25,7 @@ template: ${OBJS}
 .PRECIOUS: %.o
 
 
-run: template
+run: clean template
 	./template
 
 

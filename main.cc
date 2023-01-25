@@ -227,6 +227,13 @@ void test_tie() {
 
 }
 
+void test_move() {
+    std::cout << __FUNCTION__ << "---------" << std::endl;
+    int i = 1;
+    process(my_traits::move(i));
+    process(my_traits::move(0));
+}
+
 int main() {
     test_is_same();
     test_remove_reference();
@@ -243,5 +250,6 @@ int main() {
     test_reference_collapse();
     test_tie();
 
+    test_move();
     return 0;
 }

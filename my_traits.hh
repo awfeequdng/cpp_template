@@ -89,4 +89,10 @@ std::tuple<Args&...> tie(Args&...args) {
     return {args...};
 }
 
+// move
+template <typename T>
+remove_reference_t<T>&& move(T&& v) {
+    return static_cast<remove_reference_t<T>&&>(v);
+}
+
 } // namespace my_traits
