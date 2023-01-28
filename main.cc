@@ -2,6 +2,8 @@
 #include "my_traits.hh"
 #include <cassert>
 #include <array>
+#include <functional>
+#include "traits.hh"
 
 #include "array.hh"
 
@@ -290,6 +292,98 @@ void test_has_member_type() {
     assert(!b);
 }
 
+int test_double(double a) {
+    return 2 * a;
+}
+
+void test_functional() {
+    std::function<int(double)>a;
+    try {
+        a(2.0);
+    } catch (std::bad_function_call &e) {
+        std::cout << "call a(2.0) error: " << e.what() << std::endl;
+    }
+
+    std::function<int(double)> b = test_double;
+    std::cout << "b(2.1) = " << b(2.1) << std::endl;
+    std::cout << "sizeof a = " << sizeof(a) << std::endl;
+    std::cout << "sizeof b = " << sizeof(b) << std::endl;
+
+    void (*func)(int) = 0;
+    void (*func1)(int) = (void(*)(int))1; // 当
+    // func(1);
+
+}
+
+void test_traits() {
+    std::cout << __FUNCTION__ << "---------" << std::endl;
+    std::cout << "is_same<int, int&>::value : " << type_traits::is_same<int, int&>::value << std::endl;
+    std::cout << "is_same_v<int, int&> : " << type_traits::is_same_v<int, int&> << std::endl;
+    std::cout << "is_same<int, int>::value : " << type_traits::is_same<int, int>::value << std::endl;
+    std::cout << "is_same_v<int, int> : " << type_traits::is_same_v<int, int> << std::endl;
+
+    using type1 = type_traits::remove_reference_t<int &>;
+    std::cout << "is_same_v<type1, int> : " << type_traits::is_same_v<type1, int> << std::endl;
+    std::cout << "is_same_v<type1, int&> : " << type_traits::is_same_v<type1, int&> << std::endl;
+    using type2 = type_traits::remove_reference_t<const int &>;
+    std::cout << "is_same_v<type2, const int> : " << type_traits::is_same_v<type2, const int> << std::endl;
+    std::cout << "is_same_v<type2, const int&> : " << type_traits::is_same_v<type2, const int&> << std::endl;
+    using type3 = type_traits::remove_reference_t<volatile int &>;
+    std::cout << "is_same_v<type3, volatile int> : " << type_traits::is_same_v<type3, volatile int> << std::endl;
+    std::cout << "is_same_v<type3, volatile int&> : " << type_traits::is_same_v<type3, volatile int&> << std::endl;
+
+    // 没有把引用remove之前，是不能移除volatile的
+    using type4 = type_traits::remove_volatile_t<volatile int &>;
+    std::cout << "is_same_v<type4, int> : " << type_traits::is_same_v<type4,  int> << std::endl; // 0
+    std::cout << "is_same_v<type4, volatile int> : " << type_traits::is_same_v<type4, volatile int> << std::endl; // 0
+    std::cout << "is_same_v<type4, volatile int&> : " << type_traits::is_same_v<type4, volatile int&> << std::endl; // 1
+    using type5 = type_traits::remove_volatile_t<volatile int>;
+    std::cout << "is_same_v<type5, int> : " << type_traits::is_same_v<type5,  int> << std::endl;
+    std::cout << "is_same_v<type5, volatile int> : " << type_traits::is_same_v<type5, volatile int> << std::endl;
+    std::cout << "is_same_v<type5, volatile int&> : " << type_traits::is_same_v<type5, volatile int&> << std::endl;
+
+    // 没有把引用remove之前，是不能移除const的
+    using type6 = type_traits::remove_const_t<const int &>;
+    std::cout << "is_same_v<type6, int> : " << type_traits::is_same_v<type6,  int> << std::endl; // 0
+    std::cout << "is_same_v<type6, const int> : " << type_traits::is_same_v<type6, const int> << std::endl; // 0
+    std::cout << "is_same_v<type6, const int&> : " << type_traits::is_same_v<type6, const int&> << std::endl; // 1
+    using type7 = type_traits::remove_const_t<const int>;
+    std::cout << "is_same_v<type7, int> : " << type_traits::is_same_v<type7,  int> << std::endl;
+    std::cout << "is_same_v<type7, const int> : " << type_traits::is_same_v<type7, const int> << std::endl;
+    std::cout << "is_same_v<type7, const int&> : " << type_traits::is_same_v<type7, const int&> << std::endl;
+
+    using type8 = type_traits::remove_const_t<volatile const int>;
+    std::cout << "is_same_v<type8, int> : " << type_traits::is_same_v<type8,  volatile int> << std::endl; // 1
+    std::cout << "is_same_v<type8, const int> : " << type_traits::is_same_v<type8, volatile const int> << std::endl; // 0
+    std::cout << "is_same_v<type8, const int&> : " << type_traits::is_same_v<type8, const volatile int> << std::endl; // 0
+    using type9 = type_traits::remove_const_t<const volatile int>;
+    std::cout << "is_same_v<type9, int> : " << type_traits::is_same_v<type8,  volatile int> << std::endl; // 1
+    std::cout << "is_same_v<type9, const int> : " << type_traits::is_same_v<type8, volatile const int> << std::endl; // 0
+    std::cout << "is_same_v<type9, const int&> : " << type_traits::is_same_v<type8, const volatile int> << std::endl; // 0
+
+    using type10 = type_traits::remove_volatile_t<volatile const int>;
+    std::cout << "is_same_v<type10, int> : " << type_traits::is_same_v<type10,  const int> << std::endl; // 1
+    std::cout << "is_same_v<type10, const int> : " << type_traits::is_same_v<type10, volatile const int> << std::endl; // 0
+    std::cout << "is_same_v<type10, const int&> : " << type_traits::is_same_v<type10, const volatile int> << std::endl; // 0
+    using type11 = type_traits::remove_volatile_t<const volatile int>;
+    std::cout << "is_same_v<type11, int> : " << type_traits::is_same_v<type11,  const int> << std::endl; // 1
+    std::cout << "is_same_v<type11, const int> : " << type_traits::is_same_v<type11, volatile const int> << std::endl; // 0
+    std::cout << "is_same_v<type11, const int&> : " << type_traits::is_same_v<type11, const volatile int> << std::endl; // 0
+
+    using type12 = type_traits::decay_t<const volatile int&>;
+    std::cout << "is_same_v<type12, int> : " << type_traits::is_same_v<type12,  int> << std::endl; // 1
+    std::cout << "is_same_v<type12, int&> : " << type_traits::is_same_v<type12,  int&> << std::endl; // 0
+    std::cout << "is_same_v<type12, const int> : " << type_traits::is_same_v<type12,  const int&> << std::endl; // 0
+    std::cout << "is_same_v<type12, const int&> : " << type_traits::is_same_v<type12,  const int> << std::endl; // 0
+    std::cout << "is_same_v<type12, volatile int> : " << type_traits::is_same_v<type12,  volatile int> << std::endl; // 0
+    std::cout << "is_same_v<type12, volatile int&> : " << type_traits::is_same_v<type12,  volatile int&> << std::endl; // 0
+    std::cout << "is_same_v<type12, const volatile int> : " << type_traits::is_same_v<type12,  const volatile int> << std::endl; // 0
+    std::cout << "is_same_v<type12, volatile const int> : " << type_traits::is_same_v<type12,  volatile const int> << std::endl; // 0
+    std::cout << "is_same_v<type12, const volatile int&> : " << type_traits::is_same_v<type12,  const volatile int&> << std::endl; // 0
+    std::cout << "is_same_v<type12, volatile const int&> : " << type_traits::is_same_v<type12,  volatile const int&> << std::endl; // 0
+
+}
+
 int main() {
     test_is_same();
     test_remove_reference();
@@ -309,6 +403,8 @@ int main() {
     test_conditional();
     test_has_x();
     test_has_member_type();
+    test_functional();
+    test_traits();
 
     return 0;
 }

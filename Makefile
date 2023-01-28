@@ -14,11 +14,11 @@ OBJS = $(subst .cc,.o,$(wildcard *.cc))
 
 %.o: %.cc
 	@echo [32m"CC "[m $(CFLAGS) [33m$<[m
-	@$(CXX) $(CFLAGS) -o $@ -c $<
+	@$(CXX) $(CFLAGS) -g -o $@ -c $<
 
 template: ${OBJS}
 	@echo [31mBIN[m "   " [33m$@[m
-	@$(CXX) $^ $(LPATH) $(LIBS) -Wl,-E -rdynamic -o $@
+	@$(CXX) $^ $(LPATH) -g $(LIBS) -Wl,-E -rdynamic -o $@
 
 
 # do not automatically delete *.o
